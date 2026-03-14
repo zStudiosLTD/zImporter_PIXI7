@@ -64,6 +64,8 @@ export interface OrientationData {
     };
     width: number;
     height: number;
+    skewX?: number;
+    skewY?: number;
 }
 export interface BaseAssetData {
     type: string;
@@ -207,6 +209,8 @@ export interface AnimTrackData {
     rotation?: number;
     scaleX?: number;
     scaleY?: number;
+    skewX?: number;
+    skewY?: number;
     easing?: string;
 }
 export interface SceneData {
