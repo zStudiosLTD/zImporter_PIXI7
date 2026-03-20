@@ -15,6 +15,7 @@ import { ZTextInput } from "./ZTextInput";
 import { NineSlicePlane, ProgressCallback } from "pixi.js";
 import { ZNineSlice } from "./ZNineSlice";
 import { ZSpine } from "./ZSpine";
+import { ZUpdatables } from "./ZUpdatables";
 
 
 
@@ -49,7 +50,11 @@ export class ZScene {
   /**
    * The loaded PIXI spritesheet for the scene, or null if not loaded.
    */
-  private scene: PIXI.Spritesheet | null = null;
+  private scene: PIXI.Spritesheet | { textures: Record<string, PIXI.Texture>; data?: any } | null = null;
+  /**
+   * Full-path aliases for individually-loaded images (non-atlas scenes).
+   */
+  private _imageAliases: string[] | null = null;
   /**
    * The root container for all scene display objects.
    */
@@ -79,7 +84,6 @@ export class ZScene {
    * The current stage of the scene, used for managing scene transitions.
    */
   private sceneName: string | null = null;
-
 
   /** Returns the root `ZContainer` that all scene display objects are added to. */
   public get sceneStage() {
@@ -111,6 +115,7 @@ export class ZScene {
   public static getSceneById(sceneId: string): ZScene | undefined {
     return ZScene.Map.get(sceneId);
   }
+
 
 
 
@@ -259,25 +264,40 @@ export class ZScene {
 
 
   /**
-   * Destroys the scene and its assets, freeing resources.
-   */
-  async destroy(): Promise<void> {
-    const spritesheet = this.scene as PIXI.Spritesheet;
+     * Destroys the scene and its assets, freeing resources.
+     */
+    async destroy() {
+        // Remove all updatables registered through this scene from the global update loop
+        
 
-    if (spritesheet) {
-      // Ensure spritesheet is fully parsed before attempting to destroy
-      await spritesheet.parse();
-
-      // Destroy individual textures
-      for (const textureName in spritesheet.textures) {
-        spritesheet.textures[textureName].destroy();
-      }
-      spritesheet.baseTexture?.destroy();
+        const spritesheet = this.scene;
+        if (spritesheet && typeof (spritesheet as any).parse === 'function') {
+            // Atlas scene: Ensure spritesheet is fully parsed before attempting to destroy
+            const atlas = spritesheet as PIXI.Spritesheet;
+            await atlas.parse();
+            // Destroy individual textures
+            for (const textureName in atlas.textures) {
+                atlas.textures[textureName].destroy();
+            }
+            atlas.baseTexture?.destroy();
+            // Now unload the atlas asset from the asset manager
+            await PIXI.Assets.unload(this.sceneName!);
+        } else if (this._imageAliases) {
+            // Non-atlas scene: destroy textures and unload each individual image by its full-path alias
+            if (this.scene) {
+                for (const textureName in this.scene.textures) {
+                    try { this.scene.textures[textureName].destroy(true); } catch (_) { /* already destroyed */ }
+                }
+            }
+            for (const alias of this._imageAliases) {
+                try { await PIXI.Assets.unload(alias); } catch (_) { /* already unloaded or missing */ }
+            }
+            this._imageAliases = null;
+        }
+        this.scene = null;
+        this._sceneStage.destroy({ children: true });
+        this.resizeMap.clear();
     }
-
-    // Now unload the asset from the asset manager
-    await PIXI.Assets.unload(this.sceneName!);
-  }
 
 
 
@@ -313,8 +333,19 @@ export class ZScene {
     else {
       let imagesObj = this.createImagesObject(assetBasePath, placemenisObj);
       // handle the missing file gracefully here
-      this.scene = await PIXI.Assets.load(imagesObj, _updateProgressFnctn);
-      (this.scene as any).textures = this.scene;//ugly hack
+      const loadResult = await PIXI.Assets.load(imagesObj, _updateProgressFnctn);
+      // Build a texName→texture map so createFrame() can look up textures by
+      // short name (e.g. "instance3") while the global PIXI cache stores them
+      // under their full-path aliases (unique per scene/page).
+      const sceneTextures: Record<string, PIXI.Texture> = {};
+      for (const imgInfo of imagesObj) {
+          const tex = loadResult[imgInfo.alias];
+          if (tex) sceneTextures[imgInfo._texName] = tex;
+      }
+      this.scene = loadResult;//{ textures: sceneTextures };
+      (this.scene as any).textures = sceneTextures; // Override the textures property to use short names
+      // Keep track of registered full-path aliases for proper cleanup on destroy.
+      this._imageAliases = imagesObj.map(img => img.alias);
     }
 
 
@@ -390,8 +421,8 @@ export class ZScene {
    * @param obj - The scene data whose templates are scanned for `img` and `9slice` assets.
    * @returns An array of `{ alias, src }` objects suitable for `PIXI.Assets.load`.
    */
-  private createImagesObject(assetBasePath: string, obj: SceneData): { alias: string; src: string }[] {
-    let images: { alias: string; src: string }[] = [];
+  private createImagesObject(assetBasePath: string, obj: SceneData): { alias: string; src: string; _texName: string }[] {
+    let images: { alias: string; src: string; _texName: string }[] = [];
     let record: any = {};
     let templates: Record<string, TemplateData> = obj.templates;
     for (let template in templates) {
@@ -404,7 +435,13 @@ export class ZScene {
             record[imgData.name] = true;
             let texName: string = imgData.name.endsWith("_9S") ? imgData.name.slice(0, -3) : imgData.name;
             texName = texName.endsWith("_IMG") ? texName.slice(0, -4) : texName;
-            images.push({ alias: texName, src: assetBasePath + imgData.filePath });
+            // Use the full path as alias to ensure uniqueness across scenes.
+            // Scenes from different pages may share the same file name (e.g.
+            // "instance3.png") but live in different directories.  A short alias
+            // like "instance3" would collide in PIXI's global Assets cache;
+            // the full path alias is guaranteed to be unique per page.
+            const fullAlias = assetBasePath + imgData.filePath;
+            images.push({ alias: fullAlias, src: fullAlias + `?t=${Date.now()}`, _texName: texName });
           }
 
         }

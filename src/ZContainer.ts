@@ -853,4 +853,12 @@ export class ZContainer extends PIXI.Container {
         this.emitter!.emit = false;
     }
 
+    public destroy(options?: PIXI.IDestroyOptions | boolean): void {
+        if (this.emitter) {
+            this.emitter.cleanup();
+            this.emitter = undefined;
+        }
+        super.destroy(options);
+    }
+
 }

@@ -2,6 +2,7 @@ import { ZCuePointsManager } from "./ZCuePointsManager";
 import { ZContainer } from "./ZContainer";
 import { ZUpdatables } from "./ZUpdatables";
 import { InstanceData } from "./SceneData";
+import { IDestroyOptions } from "pixi.js";
 
 /**
  * Represents a timeline container that manages frame-based animations for its children.
@@ -220,6 +221,12 @@ export class ZTimeline extends ZContainer {
                 }
             }
         }
+    }
+
+    public destroy(options?: IDestroyOptions | boolean): void {
+        this.stop();
+        ZUpdatables.removeUpdateAble(this);
+        super.destroy(options);
     }
 }
 
