@@ -82,7 +82,7 @@ export class ZState extends ZContainer {
             chosenChild.parent.addChild(chosenChild);
             if (chosenChild instanceof ZTimeline) {
                 let t = chosenChild;
-                t.play();
+                t.gotoAndPlay(0);
             }
             this.playSpines(chosenChild);
             return chosenChild;
@@ -97,7 +97,10 @@ export class ZState extends ZContainer {
                 drill = false;
                 let spineData = container.getChildSpineData();
                 if (spineData.playOnStart && spineData.playOnStart.value) {
-                    spine.state.setAnimation(0, spineData.playOnStart.animation, spineData.playOnStart.loop);
+                    //we need this to happen on the next frame, since stopAllSpineAnims happens now
+                    setTimeout(() => {
+                        spine.state.setAnimation(0, spineData.playOnStart.animation, spineData.playOnStart.loop);
+                    }, 0);
                 }
             }
         }

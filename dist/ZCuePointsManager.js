@@ -23,9 +23,10 @@ export class ZCuePointsManager {
         if (this.cuePoints.has(cuePoint)) {
             const callbacks = this.cuePoints.get(cuePoint);
             if (callbacks) {
-                const index = callbacks.indexOf(callback);
-                if (index !== -1) {
-                    callbacks.splice(index, 1);
+                for (let i = callbacks.length - 1; i >= 0; i--) {
+                    if (callbacks[i] === callback) {
+                        callbacks.splice(i, 1);
+                    }
                 }
             }
         }
@@ -40,7 +41,7 @@ export class ZCuePointsManager {
         if (this.cuePoints.has(cuePoint)) {
             const callbacks = this.cuePoints.get(cuePoint);
             if (callbacks) {
-                for (const callback of callbacks) {
+                for (const callback of [...callbacks]) {
                     callback(...args);
                 }
             }
