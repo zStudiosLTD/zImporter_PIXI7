@@ -1,5 +1,5 @@
 import * as PIXI from 'pixi.js';
-import { InstanceData } from './SceneData';
+import { InstanceData, SpineData } from './SceneData';
 import { OrientationData } from './SceneData';
 import { Emitter } from "@pixi/particle-emitter";
 import TextInput from './text-input';
@@ -93,6 +93,9 @@ export declare class ZContainer extends PIXI.Container {
     originalFontSize?: number;
     fixedBoxSize?: boolean;
     _props?: any;
+    private childSpineData;
+    setChilSpineData(data: SpineData): void;
+    getChildSpineData(): SpineData;
     /**
      * Performs a breadth-first search and returns the first descendant `ZContainer` with the given name.
      * @param childName - The `name` to search for.

@@ -39,6 +39,8 @@ export declare class ZState extends ZContainer {
      * @returns The activated `ZContainer`, or `null` if no children exist.
      */
     setState(str: string): ZContainer | null;
+    private playSpines;
+    private stopAllSpineAnims;
     /**
      * Returns the names of all direct children (states).
      * @returns An array of child name strings (may contain `null` for unnamed children).

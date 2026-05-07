@@ -902,6 +902,7 @@ export class ZScene {
         let zSpine = new ZSpine(spineData, assetBasePath);
         zSpine.load((spine: PIXISpine3.Spine | PIXISpine4.Spine | undefined) => {
           if (spine) {
+            mc.setChilSpineData(spineData);
             mc.addChild(spine);
             if (spineData.slotAttachments && spineData.slotAttachments.length > 0) {
               for (const attachment of spineData.slotAttachments) {

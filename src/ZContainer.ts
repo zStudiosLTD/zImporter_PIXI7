@@ -1,6 +1,6 @@
 
 import * as PIXI from 'pixi.js';
-import { InstanceData } from './SceneData';
+import { InstanceData, SpineData } from './SceneData';
 import { OrientationData } from './SceneData';
 import { ZScene } from './ZScene';
 import { ZTimeline } from './ZTimeline';
@@ -118,6 +118,16 @@ export class ZContainer extends PIXI.Container {
     originalFontSize?: number;
     fixedBoxSize?: boolean;
     _props?: any;
+
+    private childSpineData:SpineData;
+
+    public setChilSpineData(data: SpineData){
+        this.childSpineData = data;
+    }
+
+    public getChildSpineData(): SpineData{
+        return this.childSpineData;
+    }
 
     /**
      * Performs a breadth-first search and returns the first descendant `ZContainer` with the given name.

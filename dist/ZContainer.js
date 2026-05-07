@@ -85,6 +85,13 @@ export class ZContainer extends PIXI.Container {
     originalFontSize;
     fixedBoxSize;
     _props;
+    childSpineData;
+    setChilSpineData(data) {
+        this.childSpineData = data;
+    }
+    getChildSpineData() {
+        return this.childSpineData;
+    }
     /**
      * Performs a breadth-first search and returns the first descendant `ZContainer` with the given name.
      * @param childName - The `name` to search for.

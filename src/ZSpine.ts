@@ -58,7 +58,7 @@ export class ZSpine {
             }
 
             if (spineData.playOnStart && spineData.playOnStart.value) {
-                spine!.state.setAnimation(0, spineData.playOnStart.animation, true);
+                spine!.state.setAnimation(0, spineData.playOnStart.animation, spineData.playOnStart.loop);
             }
 
             callback(spine!);
