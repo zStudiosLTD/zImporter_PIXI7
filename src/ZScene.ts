@@ -900,7 +900,7 @@ export class ZScene {
         }
         let spineData = childNode as SpineData;
         let zSpine = new ZSpine(spineData, assetBasePath);
-        zSpine.load((spine: PIXISpine3.Spine | PIXISpine4.Spine | undefined) => {
+        await zSpine.load((spine: PIXISpine3.Spine | PIXISpine4.Spine | undefined) => {
           if (spine) {
             mc.setChilSpineData(spineData);
             mc.addChild(spine);

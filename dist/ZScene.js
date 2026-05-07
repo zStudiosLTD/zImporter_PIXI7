@@ -786,7 +786,7 @@ export class ZScene {
                 }
                 let spineData = childNode;
                 let zSpine = new ZSpine(spineData, assetBasePath);
-                zSpine.load((spine) => {
+                await zSpine.load((spine) => {
                     if (spine) {
                         mc.setChilSpineData(spineData);
                         mc.addChild(spine);

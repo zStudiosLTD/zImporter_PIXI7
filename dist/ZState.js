@@ -68,7 +68,6 @@ export class ZState extends ZContainer {
                 if (child instanceof ZTimeline) {
                     let t = child;
                     t.stop();
-                    this.stopAllSpineAnims(child);
                 }
             }
         }
@@ -85,27 +84,27 @@ export class ZState extends ZContainer {
                 let t = chosenChild;
                 t.play();
             }
-            if (chosenChild instanceof ZContainer) {
-                this.playSpines(chosenChild);
-            }
+            this.playSpines(chosenChild);
             return chosenChild;
         }
         return null;
     }
     playSpines(container) {
-        let spine = container.getSpine();
-        if (spine && spine.state) {
-            let spineData = container.getChildSpineData();
-            if (spineData.playOnStart && spineData.playOnStart.value) {
-                spine.state.setAnimation(0, spineData.playOnStart.animation, spineData.playOnStart.loop);
+        let drill = true;
+        if (container instanceof ZContainer) {
+            let spine = container.getSpine();
+            if (spine && spine.state) {
+                drill = false;
+                let spineData = container.getChildSpineData();
+                if (spineData.playOnStart && spineData.playOnStart.value) {
+                    spine.state.setAnimation(0, spineData.playOnStart.animation, spineData.playOnStart.loop);
+                }
             }
         }
-        else {
+        if (drill && container.children) {
             for (let i = 0; i < container.children.length; i++) {
                 let child = container.children[i];
-                if (child instanceof ZContainer) {
-                    this.playSpines(child);
-                }
+                this.playSpines(child);
             }
         }
     }
