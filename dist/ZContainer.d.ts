@@ -172,6 +172,7 @@ export declare class ZContainer extends PIXI.Container {
      * @param orientation - `"portrait"` or `"landscape"`.
      */
     setInstanceData(data: InstanceData, orientation: string): void;
+    private addMask;
     /**
      * When set to `true`, stretches this container to fill the entire screen
      * on the next `applyTransform` call.
