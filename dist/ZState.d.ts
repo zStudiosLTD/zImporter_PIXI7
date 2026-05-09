@@ -39,6 +39,8 @@ export declare class ZState extends ZContainer {
      * @returns The activated `ZContainer`, or `null` if no children exist.
      */
     setState(str: string): ZContainer | null;
+    private playAllTimelines;
+    private stopAllTimelines;
     private playSpines;
     private stopAllSpineAnims;
     /**
