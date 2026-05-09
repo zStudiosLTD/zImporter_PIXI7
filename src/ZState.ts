@@ -72,11 +72,6 @@ export class ZState extends ZContainer {
                 else {
                     child.visible = false;
                 }
-
-                if (child instanceof ZTimeline) {
-                    let t = child as ZTimeline;
-                    t.stop();
-                }
             }
         }
         if (chosenChild) {
