@@ -4,7 +4,7 @@
  "description": "A TypeScript library for importing and managing zStudio scenes in PixiJS applications.",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
-  "repository": "https://github.com/yonnyzohar/zImporter_PIXI",
+  "repository": "https://github.com/zStudiosLTD/zImporter_PIXI7",
   "homepage": "https://zstudiosltd.com/",
   "scripts": {
     "build": "tsc",
