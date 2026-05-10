@@ -1,6 +1,6 @@
 {
   "name": "zimporter-pixi",
-  "version": "1.0.93",
+  "version": "1.0.94",
  "description": "A TypeScript library for importing and managing zStudio scenes in PixiJS applications.",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
