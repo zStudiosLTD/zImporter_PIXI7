@@ -39,7 +39,7 @@ npm run package
 ### Importing zImporter into Your Project
 
 You can find an example project here:
-[https://github.com/yonnyzohar/zImporter\_PIXI\_Example](https://github.com/yonnyzohar/zImporter_PIXI_Example)
+https://github.com/zStudiosLTD/zImporter_PIXI_Example
 
 Basic import:
 
