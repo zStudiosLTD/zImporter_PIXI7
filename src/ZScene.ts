@@ -3,7 +3,7 @@ import * as PIXI from "pixi.js";
 import { ZButton } from "./ZButton";
 import { ZContainer } from "./ZContainer";
 import { ZTimeline } from "./ZTimeline";
-import { InstanceData, SceneData, TemplateData, AnimTrackData, TextData, BaseAssetData, SpriteData, SpineData, ParticleData, TextInputData, NineSliceData, BitmapFontLocked } from "./SceneData";
+import { InstanceData, SceneData, TemplateData, AnimTrackData, TextData, BaseAssetData, SpriteData, SpineData, ParticleData, TextInputData, NineSliceData, BitmapFontLocked, AnimatedSpriteData } from "./SceneData";
 import { ZState } from "./ZState";
 import * as PIXISpine3 from "@pixi-spine/runtime-3.8";
 import * as PIXISpine4 from "@pixi-spine/all-4.0";
@@ -445,6 +445,17 @@ export class ZScene {
           }
 
         }
+
+        if (childObj.type == "animatedSprite") {
+          let animData = childObj as AnimatedSpriteData;
+          for (const framePath of animData.framePaths) {
+            if (!record[framePath]) {
+              record[framePath] = true;
+              const fullAlias = assetBasePath + framePath;
+              images.push({ alias: fullAlias, src: fullAlias + `?t=${Date.now()}`, _texName: framePath });
+            }
+          }
+        }
       }
     }
     return images;
@@ -808,6 +819,22 @@ export class ZScene {
         img.width = _w;
         img.height = _h;
         img.pivot.set(pivotX, pivotY);
+      }
+
+      if (type == "animatedSprite") {
+        let animData = childNode as AnimatedSpriteData;
+        const textures: PIXI.Texture[] = animData.framePaths.map(fp => {
+          return this.scene?.textures[fp] ?? PIXI.Texture.from(this.assetBasePath + fp);
+        });
+        const sprite = new PIXI.AnimatedSprite(textures);
+        sprite.animationSpeed = animData.fps / 60;
+        sprite.x = animData.x || 0;
+        sprite.y = animData.y || 0;
+        sprite.loop = false;
+        sprite.name = _name;
+        (mc as any)[_name] = sprite;
+        mc.addChild(sprite);
+        this.applyFilters(childNode, sprite);
       }
 
       if (type == "9slice") {

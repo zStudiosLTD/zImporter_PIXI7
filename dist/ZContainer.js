@@ -343,6 +343,17 @@ export class ZContainer extends PIXI.Container {
         if (data.mask) {
             this.addMask(data.mask, 0);
         }
+        if (data.playOnStart) {
+            for (const child of this.children) {
+                if (child instanceof PIXI.AnimatedSprite) {
+                    child.loop = data.looping ?? false;
+                    if (!child.loop) {
+                        child.onComplete = () => { child.gotoAndStop(child.totalFrames - 1); };
+                    }
+                    child.play();
+                }
+            }
+        }
     }
     addMask(mskName, retry) {
         if (retry >= 3) {
