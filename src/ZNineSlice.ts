@@ -7,7 +7,8 @@ export class ZNineSlice extends PIXI.NineSlicePlane {
     currentTransform: OrientationData;
 
     constructor(texture: PIXI.Texture, nineSliceData: NineSliceData, orientation: string) {
-        super(texture, nineSliceData.left, nineSliceData.right, nineSliceData.top, nineSliceData.bottom);
+        // PIXI's order is left, top, right, bottom
+        super(texture, nineSliceData.left, nineSliceData.top, nineSliceData.right, nineSliceData.bottom);
         this.portrait = nineSliceData.portrait;
         this.landscape = nineSliceData.landscape;
         this.currentTransform = orientation === "portrait" ? this.portrait : this.landscape;
