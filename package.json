@@ -1,7 +1,7 @@
 {
   "name": "zimporter-pixi",
-  "version": "1.0.97",
- "description": "A TypeScript library for importing and managing zStudio scenes in PixiJS applications.",
+  "version": "1.0.98",
+  "description": "A TypeScript library for importing and managing zStudio scenes in PixiJS applications.",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "repository": "https://github.com/zStudiosLTD/zImporter_PIXI7",
@@ -11,7 +11,14 @@
     "package": "tsc && webpack --config webpack.config.js",
     "docs": "typedoc"
   },
-  "keywords": ["pixi", "pixijs", "zstudio", "animation", "ui", "typescript"],
+  "keywords": [
+    "pixi",
+    "pixijs",
+    "zstudio",
+    "animation",
+    "ui",
+    "typescript"
+  ],
   "author": "Yonathan Zohar",
   "license": "MIT",
   "devDependencies": {
@@ -43,7 +50,8 @@
     "reflect-metadata": "^0.2.2"
   },
   "files": [
-    "dist/**/*"
+    "dist/**/*",
+    "skills/**/*"
   ],
   "ignore": [
     "node_modules",

@@ -4,6 +4,11 @@ import { ZNineSlice } from './ZNineSlice';
 import TextInput from './text-input';
 import * as PIXISpine3 from "@pixi-spine/runtime-3.8";
 import * as PIXISpine4 from "@pixi-spine/all-4.0";
+/** Copies stored transforms so instances of the same template never share them. */
+const cloneOrientation = (data) => data && ({
+    ...data,
+    ...(data.anchorPercentage ? { anchorPercentage: { ...data.anchorPercentage } } : {}),
+});
 /**
  * A custom container class extending `PIXI.Container` that supports orientation-based transforms,
  * anchoring, and instance data management for responsive layouts.
@@ -316,8 +321,8 @@ export class ZContainer extends PIXI.Container {
      * @param orientation - `"portrait"` or `"landscape"`.
      */
     setInstanceData(data, orientation) {
-        this.portrait = data.portrait;
-        this.landscape = data.landscape;
+        this.portrait = cloneOrientation(data.portrait);
+        this.landscape = cloneOrientation(data.landscape);
         this.currentTransform = orientation === "portrait" ? this.portrait : this.landscape;
         this.applyTransform();
         this.name = data.instanceName || "";

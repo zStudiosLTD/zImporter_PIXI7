@@ -99,6 +99,7 @@ export class ZScroll extends ZContainer {
         this.scrollArea.interactive = true;
         this.scrollContent.y = 0;
         this.scrollBar.y = 0;
+        this.beed.y = 0;
         this.addEventListeners();
         this.enableChildPassThrough();
     }
