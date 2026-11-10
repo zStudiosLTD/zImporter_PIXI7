@@ -1,5 +1,4 @@
-﻿import { gsap } from 'gsap';
-import * as PIXI from 'pixi.js';
+﻿import * as PIXI from 'pixi.js';
 import { ZContainer } from "./ZContainer";
 import { InstanceData } from './SceneData';
 import TextInput from './text-input';
